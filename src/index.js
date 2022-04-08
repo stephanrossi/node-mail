@@ -15,16 +15,14 @@ const getEmails = () => {
     const imap = new Imap(imapConfig);
     imap.once('ready', () => {
       imap.openBox('INBOX', false, () => {
-        imap.search(['UNSEEN', ['BEFORE', new Date()]], (err, results) => {
+        imap.search(['UNSEEN', ['ON', new Date()]], (err, results) => {
           const f = imap.fetch(results, { bodies: '' });
           f.on('message', msg => {
             msg.on('body', stream => {
               simpleParser(stream, async (err, parsed) => {
-                // const {from, subject, textAsHtml, text} = parsed;
-                const { subject, from, to } = parsed
-                const sender = parsed.from.text
-                // console.log(parsed.subject + '\n' + parsed.from.text + '\n' + parsed.to.text);
-                console.log(sender);
+                const { attachments} = parsed;
+                // const { subject, from, to } = parsed
+                console.log(attachments);
                 /* Make API call to save the data
                    Save the retrieved data into a database.
                    E.t.c
